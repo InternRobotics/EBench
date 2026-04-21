@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import time
 import torch
 from genmanip_client import EvalClient
 from transformers import AutoModel, AutoProcessor
@@ -13,20 +14,76 @@ def get_args():
     parser.add_argument("--token", type=str, required=True)
     parser.add_argument("--worker_id", default=0)
     parser.add_argument("--used_chunk_size", type=int, default=30)
+    parser.add_argument("--client_reinit_retries", type=int, default=3)
+    parser.add_argument("--client_reinit_backoff", type=float, default=5.0)
     return parser.parse_args()
+
+
+def build_eval_client(args, wid):
+    return EvalClient(
+        base_url=args.base_url,
+        token=args.token,
+        run_id=args.run_id,
+        worker_ids=[wid],
+    )
+
+
+def cleanup_eval_client(eval_client, kill_workers):
+    if eval_client is None:
+        return
+
+    try:
+        if kill_workers:
+            eval_client.close()
+            return
+
+        close_recorders = getattr(eval_client, "close_recorders", None)
+        if callable(close_recorders):
+            close_recorders()
+    except Exception as exc:
+        action = "close eval client" if kill_workers else "close client recorders"
+        print(f"[warn] Failed to {action}: {exc}", flush=True)
+
+
+def recreate_eval_client(args, wid, eval_client, reason):
+    cleanup_eval_client(eval_client, kill_workers=False)
+    last_exc = None
+    max_attempts = max(1, args.client_reinit_retries)
+
+    for attempt in range(1, max_attempts + 1):
+        new_client = None
+        try:
+            print(
+                f"[warn] Recreating EvalClient after {reason} "
+                f"(attempt {attempt}/{max_attempts})",
+                flush=True,
+            )
+            new_client = build_eval_client(args, wid)
+            # After a transport failure we do a fresh reset because the previous
+            # step may have partially executed on the server and local obs is stale.
+            obs = new_client.reset()
+            return new_client, obs
+        except Exception as exc:
+            last_exc = exc
+            cleanup_eval_client(new_client, kill_workers=False)
+            if attempt < max_attempts:
+                sleep_s = args.client_reinit_backoff * attempt
+                print(
+                    f"[warn] EvalClient recovery attempt failed: {exc}. "
+                    f"Retrying in {sleep_s:.1f}s",
+                    flush=True,
+                )
+                time.sleep(sleep_s)
+
+    raise RuntimeError(
+        f"Failed to recover EvalClient after {max_attempts} attempts: {last_exc}"
+    ) from last_exc
 
 
 def main():
     args = get_args()
     wid = str(args.worker_id)
-
-    eval_client = EvalClient(
-        base_url=args.base_url,
-        token=args.token,
-        run_id=args.run_id,
-        worker_ids=[wid],
-        
-    )
+    eval_client = None
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = AutoModel.from_pretrained(
         args.model_path, trust_remote_code=True, torch_dtype=torch.float32
@@ -34,7 +91,12 @@ def main():
     processor = AutoProcessor.from_pretrained(args.model_path, trust_remote_code=True)
 
     try:
-        obs = eval_client.reset()
+        eval_client, obs = recreate_eval_client(
+            args=args,
+            wid=wid,
+            eval_client=eval_client,
+            reason="startup",
+        )
         while True:
             o = obs[wid]["obs"]
             c_joints = np.array(o["state.joints"], dtype=np.float32)
@@ -85,11 +147,21 @@ def main():
                     }
                 )
 
-            obs, done = eval_client.step(deploy_action_chunk)
+            try:
+                obs, done = eval_client.step(deploy_action_chunk)
+            except Exception as exc:
+                print(f"[warn] EvalClient step failed: {exc}", flush=True)
+                eval_client, obs = recreate_eval_client(
+                    args=args,
+                    wid=wid,
+                    eval_client=eval_client,
+                    reason="step failure",
+                )
+                continue
             if done:
                 break
     finally:
-        eval_client.close()
+        cleanup_eval_client(eval_client, kill_workers=True)
 
 
 if __name__ == "__main__":
