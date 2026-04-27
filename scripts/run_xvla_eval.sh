@@ -7,11 +7,45 @@ set -uo pipefail
 
 RUN_PY="$(cd "$(dirname "$0")/.." && pwd)/baselines/X-VLA/run.py"
 LOG_DIR="${LOG_DIR:-log_dir/$(date +%Y%m%d_%H%M%S)-${RUN_ID}}"
+STEP_MODE="${STEP_MODE:-chunk}"
 mkdir -p "$LOG_DIR"
 echo "[run_xvla_eval] logs -> $LOG_DIR"
+echo "[run_xvla_eval] step_mode=$STEP_MODE"
 
 pids=()
-trap 'kill "${pids[@]}" 2>/dev/null; exit 130' INT TERM
+
+cleanup() {
+    local rc="${1:-0}"
+    trap - INT TERM EXIT
+    # Gather workers and any of their descendants.
+    local alive=()
+    for p in "${pids[@]:-}"; do
+        kill -0 "$p" 2>/dev/null && alive+=("$p")
+    done
+    if (( ${#alive[@]} )); then
+        echo "[run_xvla_eval] cleanup: TERM ${alive[*]}"
+        # Kill descendants first (e.g. CUDA helper threads spawned by python)
+        for p in "${alive[@]}"; do pkill -TERM -P "$p" 2>/dev/null || true; done
+        kill -TERM "${alive[@]}" 2>/dev/null || true
+        for _ in $(seq 1 20); do
+            local still=0
+            for p in "${alive[@]}"; do kill -0 "$p" 2>/dev/null && still=1; done
+            (( still == 0 )) && break
+            sleep 0.5
+        done
+        for p in "${alive[@]}"; do
+            if kill -0 "$p" 2>/dev/null; then
+                pkill -KILL -P "$p" 2>/dev/null || true
+                kill -KILL "$p" 2>/dev/null || true
+            fi
+        done
+    fi
+    exit "$rc"
+}
+trap 'cleanup 130' INT TERM
+trap 'cleanup "$?"' EXIT
+
+
 
 for wid in ${WORKER_IDS//,/ }; do
     log="$LOG_DIR/worker_${wid}.log"
@@ -21,6 +55,7 @@ for wid in ${WORKER_IDS//,/ }; do
         --run_id    "$RUN_ID" \
         --token     "$TOKEN" \
         --worker_id "$wid" \
+        --step_mode "$STEP_MODE" \
         > "$log" 2>&1 &
     pids+=($!)
     echo "[run_xvla_eval] worker=$wid pid=$! log=$log"

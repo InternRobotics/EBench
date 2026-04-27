@@ -14,6 +14,14 @@ def get_args():
     parser.add_argument("--token", type=str, required=True)
     parser.add_argument("--worker_id", default=0)
     parser.add_argument("--used_chunk_size", type=int, default=30)
+    parser.add_argument(
+        "--step_mode",
+        type=str,
+        default="chunk",
+        choices=("chunk", "step"),
+        help="chunk: send one inferred chunk per EvalClient.step(); step: execute one action at a time",
+    )
+    
     parser.add_argument("--client_reinit_retries", type=int, default=3)
     parser.add_argument("--client_reinit_backoff", type=float, default=5.0)
     return parser.parse_args()
@@ -129,7 +137,7 @@ def main():
             action_chunk[:, 15:19] /= 20.0
 
             deploy_action_chunk = []
-            for act in action_chunk[: args.used_chunk_size]:
+            for act in action_chunk[:args.used_chunk_size]:
                 grip = (
                     ([act[15], act[16]] if act[15] >= 0.001 else [-0.01, -0.01])
                     + ([act[17], act[18]] if act[17] >= 0.001 else [-0.01, -0.01])
@@ -147,17 +155,33 @@ def main():
                     }
                 )
 
-            try:
-                obs, done = eval_client.step(deploy_action_chunk)
-            except Exception as exc:
-                print(f"[warn] EvalClient step failed: {exc}", flush=True)
-                eval_client, obs = recreate_eval_client(
-                    args=args,
-                    wid=wid,
-                    eval_client=eval_client,
-                    reason="step failure",
-                )
-                continue
+            done = False
+            if args.step_mode == "chunk":
+                try:
+                    obs, done = eval_client.step({wid: deploy_action_chunk})
+                except Exception as exc:
+                    print(f"[warn] EvalClient step failed: {exc}", flush=True)
+                    eval_client, obs = recreate_eval_client(
+                        args=args,
+                        wid=wid,
+                        eval_client=eval_client,
+                        reason="step failure",
+                    )
+            else:
+                for action in deploy_action_chunk:
+                    try:
+                        obs, done = eval_client.step({wid: action})
+                    except Exception as exc:
+                        print(f"[warn] EvalClient step failed: {exc}", flush=True)
+                        eval_client, obs = recreate_eval_client(
+                            args=args,
+                            wid=wid,
+                            eval_client=eval_client,
+                            reason="step failure",
+                        )
+                        break
+                    if done or obs[wid]['obs'].get('reset', False):
+                        break
             if done:
                 break
     finally:
