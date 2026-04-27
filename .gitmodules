@@ -1,0 +1,3 @@
+[submodule "baselines/baselines/openpi"]
+	path = baselines/baselines/openpi
+	url = https://github.com/Physical-Intelligence/openpi.git
