@@ -4,3 +4,9 @@
 [submodule "baselines/openpi"]
 	path = baselines/openpi
 	url = https://github.com/Physical-Intelligence/openpi.git
+[submodule "baselines/InternVLA-A1/EBench/baselines/InternVLA-A1/third_party/InternVLA-A1"]
+	path = baselines/InternVLA-A1/EBench/baselines/InternVLA-A1/third_party/InternVLA-A1
+	url = https://github.com/InternRobotics/InternVLA-A1.git
+[submodule "baselines/InternVLA-A1/third_party/InternVLA-A1"]
+	path = baselines/InternVLA-A1/third_party/InternVLA-A1
+	url = https://github.com/InternRobotics/InternVLA-A1
