@@ -1,8 +1,5 @@
-[submodule "baselines/baselines/openpi"]
-	path = baselines/baselines/openpi
-	url = https://github.com/Physical-Intelligence/openpi.git
-[submodule "baselines/openpi"]
-	path = baselines/openpi
+[submodule "baselines/openpi_ebench_infer/third_party/openpi"]
+	path = baselines/openpi_ebench_infer/third_party/openpi
 	url = https://github.com/Physical-Intelligence/openpi.git
 [submodule "baselines/InternVLA-A1/EBench/baselines/InternVLA-A1/third_party/InternVLA-A1"]
 	path = baselines/InternVLA-A1/EBench/baselines/InternVLA-A1/third_party/InternVLA-A1
