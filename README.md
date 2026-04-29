@@ -96,9 +96,9 @@ gmp status
 A full validation pass takes roughly **30 minutes on 8× RTX 4090**. Detailed setup, asset download, and the complete `gmp` reference are in the [docs site](https://internrobotics.github.io/EBench-doc/).
 
 ## openpi (pi0.5/pi0)
-> Modify the path in the files of openpi_ebench_infer  
-> Modify the settings in the scripts/launch_pi_onlineeval.sh  
-> Merge the folder openpi_ebench_infer with the official openpi repo
+> Install the official openpi from `baselines/openpi/third_party/openpi` (see its README for setup).  
+> Layer the EBench-specific files under `baselines/openpi/src/` and `baselines/openpi/scripts/` over the official openpi (e.g. via `PYTHONPATH` or by copying).  
+> Modify the settings in `scripts/launch_pi_onlineeval.sh`.
 
 ```bash
 # bash scripts/launch_pi_onlineeval.sh
