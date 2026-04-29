@@ -7,7 +7,7 @@ set -uo pipefail
 
 RUN_PY="$(cd "$(dirname "$0")/.." && pwd)/baselines/X-VLA/run.py"
 LOG_DIR="${LOG_DIR:-log_dir/$(date +%Y%m%d_%H%M%S)-${RUN_ID}}"
-STEP_MODE="${STEP_MODE:-chunk}"
+STEP_MODE="${STEP_MODE:-step}"
 mkdir -p "$LOG_DIR"
 echo "[run_xvla_eval] logs -> $LOG_DIR"
 echo "[run_xvla_eval] step_mode=$STEP_MODE"

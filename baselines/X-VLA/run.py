@@ -17,7 +17,7 @@ def get_args():
     parser.add_argument(
         "--step_mode",
         type=str,
-        default="chunk",
+        default="step",
         choices=("chunk", "step"),
         help="chunk: send one inferred chunk per EvalClient.step(); step: execute one action at a time",
     )
@@ -36,25 +36,19 @@ def build_eval_client(args, wid):
     )
 
 
-def cleanup_eval_client(eval_client, kill_workers):
+def cleanup_eval_client(eval_client):
     if eval_client is None:
         return
 
     try:
-        if kill_workers:
-            eval_client.close()
-            return
-
-        close_recorders = getattr(eval_client, "close_recorders", None)
-        if callable(close_recorders):
-            close_recorders()
+        eval_client.close()
     except Exception as exc:
-        action = "close eval client" if kill_workers else "close client recorders"
+        action = "close eval client"
         print(f"[warn] Failed to {action}: {exc}", flush=True)
 
 
 def recreate_eval_client(args, wid, eval_client, reason):
-    cleanup_eval_client(eval_client, kill_workers=False)
+    cleanup_eval_client(eval_client)
     last_exc = None
     max_attempts = max(1, args.client_reinit_retries)
 
@@ -73,7 +67,7 @@ def recreate_eval_client(args, wid, eval_client, reason):
             return new_client, obs
         except Exception as exc:
             last_exc = exc
-            cleanup_eval_client(new_client, kill_workers=False)
+            cleanup_eval_client(new_client)
             if attempt < max_attempts:
                 sleep_s = args.client_reinit_backoff * attempt
                 print(
@@ -185,7 +179,7 @@ def main():
             if done:
                 break
     finally:
-        cleanup_eval_client(eval_client, kill_workers=True)
+        cleanup_eval_client(eval_client)
 
 
 if __name__ == "__main__":
