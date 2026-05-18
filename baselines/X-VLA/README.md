@@ -39,7 +39,7 @@ pip install -r EBench/baselines/X-VLA/requirements.txt
 
 # install the EBench evaluation client
 git clone https://github.com/InternRobotics/genmanip-client.git
-cd genmanip-client && pip install -e . && cd -
+cd genmanip-client && pip install -e .[full_numpy1] && cd -
 ```
 
 > `transformers<=4.51.3` is pinned because X-VLA's custom modeling code

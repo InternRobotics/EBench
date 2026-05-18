@@ -78,6 +78,9 @@ class InferenceArgs:
     worker_ids: str = "0"  # Comma-separated worker IDs, e.g. "0,1,2"
     host: str = "0.0.0.0"
     port: int = 8087
+    url: str = ""  # Optional custom URL for EvalClient connection, overrides host and port if provided.
+    token: str = ""
+    run_id: str = ""
 
 
 class QwenA1PolicyWrapper:
@@ -124,9 +127,9 @@ class QwenA1PolicyWrapper:
             predicted_rel_base = action[16:]
             target_base_abs = self.chunk_start_base + predicted_rel_base
             base_motion = target_base_abs - curr_base
-            output["action"] = joints_gripper
+            output["action"] = joints_gripper.tolist()
             output['is_rel'] = False
-            output["base_motion"] = base_motion
+            output["base_motion"] = base_motion.tolist()
             output['base_is_rel'] = True
             output["control_type"] = "joint_position"
             return output
@@ -143,9 +146,9 @@ class QwenA1PolicyWrapper:
             joints_gripper = self._pack_action_fields(action)
             predicted_rel_base = action[16:]
             target_base_abs = curr_base + predicted_rel_base
-            action_step["action"] = joints_gripper
+            action_step["action"] = joints_gripper.tolist()
             action_step['is_rel'] = False
-            action_step["base_motion"] = target_base_abs
+            action_step["base_motion"] = target_base_abs.tolist()
             action_step['base_is_rel'] = False
             action_step["control_type"] = "joint_position"
             action_chunk.append(action_step)
@@ -200,7 +203,14 @@ class QwenA1PolicyWrapper:
                     image = sample[key].permute(0, 3, 1, 2)
                     sample[key] = image
 
-            sample = self.input_transforms(sample)
+            for transform in self.input_transforms.transforms:
+                if isinstance(transform, Qwen3_VLProcessorTransformFn):
+                    sample.update({
+                        f"{OBS_IMAGES}.image0_mask": torch.tensor([True]).cuda(),
+                        f"{OBS_IMAGES}.image1_mask": torch.tensor([True]).cuda(),
+                        f"{OBS_IMAGES}.image2_mask": torch.tensor([True]).cuda(),
+                    })
+                sample = transform(sample)
 
             inputs = {}
             for key in sample.keys():
@@ -247,9 +257,15 @@ if __name__ == "__main__":
     if not worker_ids:
         raise ValueError("`worker_ids` must contain at least one valid worker id.")
 
-    base_url = f"http://{args.host}:{args.port}"
+    if args.url:
+        base_url = args.url
+    else:
+        base_url = f"http://{args.host}:{args.port}"
+
     client = EvalClient(
-        base_url,
+        base_url=base_url,
+        token=args.token,
+        run_id=args.run_id,
         worker_ids=worker_ids
     )
     policy_list = [QwenA1PolicyWrapper(args) for _ in worker_ids]
@@ -263,7 +279,20 @@ if __name__ == "__main__":
                 worker_id: policy.get_action(obs[worker_id])
                 for worker_id, policy in zip(worker_ids, policy_list)
             }
-            obs, done = client.step(action)
+            try:
+                obs, done = client.step(action)
+            except Exception as exc:
+                print(f"[warn] EvalClient step failed: {exc}", flush=True)
+                client.close()
+                client = EvalClient(
+                    base_url=base_url,
+                    token=args.token,
+                    run_id=args.run_id,
+                    worker_ids=worker_ids
+                )
+                obs = client.reset()
+                policy.reset()
+                break
             if done:
                 break
 

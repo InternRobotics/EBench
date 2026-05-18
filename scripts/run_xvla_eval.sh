@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: MODEL_PATH=... BASE_URL=... RUN_ID=... TOKEN=... \
-#        WORKER_IDS=0,1,2,3 ./EBench/scripts/run_xvla_eval.sh
+#        WORKER_IDS=0,1,2,3 GPU_IDS=0,1,2,3 ./EBench/scripts/run_xvla_eval.sh
 # Multi-host: share RUN_ID across hosts, give each host a disjoint WORKER_IDS slice.
 
 set -uo pipefail
@@ -11,6 +11,9 @@ STEP_MODE="${STEP_MODE:-step}"
 mkdir -p "$LOG_DIR"
 echo "[run_xvla_eval] logs -> $LOG_DIR"
 echo "[run_xvla_eval] step_mode=$STEP_MODE"
+if [[ -n "${GPU_IDS:-}" ]]; then
+    echo "[run_xvla_eval] gpu_ids=$GPU_IDS"
+fi
 
 pids=()
 
@@ -45,11 +48,20 @@ cleanup() {
 trap 'cleanup 130' INT TERM
 trap 'cleanup "$?"' EXIT
 
+worker_ids=(${WORKER_IDS//,/ })
+gpu_ids=(${GPU_IDS:-})
+if [[ -n "${GPU_IDS:-}" ]]; then
+    gpu_ids=(${GPU_IDS//,/ })
+fi
 
-
-for wid in ${WORKER_IDS//,/ }; do
+for i in "${!worker_ids[@]}"; do
+    wid="${worker_ids[$i]}"
     log="$LOG_DIR/worker_${wid}.log"
-    python -u "$RUN_PY" \
+    env_args=()
+    if (( ${#gpu_ids[@]} )); then
+        env_args=("CUDA_VISIBLE_DEVICES=${gpu_ids[$((i % ${#gpu_ids[@]}))]}")
+    fi
+    env "${env_args[@]}" python -u "$RUN_PY" \
         --model_path "$MODEL_PATH" \
         --base_url  "$BASE_URL" \
         --run_id    "$RUN_ID" \
@@ -58,7 +70,11 @@ for wid in ${WORKER_IDS//,/ }; do
         --step_mode "$STEP_MODE" \
         > "$log" 2>&1 &
     pids+=($!)
-    echo "[run_xvla_eval] worker=$wid pid=$! log=$log"
+    if (( ${#gpu_ids[@]} )); then
+        echo "[run_xvla_eval] worker=$wid gpu=${gpu_ids[$((i % ${#gpu_ids[@]}))]} pid=$! log=$log"
+    else
+        echo "[run_xvla_eval] worker=$wid pid=$! log=$log"
+    fi
 done
 
 rc=0

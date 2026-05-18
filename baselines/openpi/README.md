@@ -6,13 +6,19 @@ This guide describes the minimal workflow for evaluating the post-trained OpenPI
 
 ### 1. Install OpenPI
 
-Install the official OpenPI repository located at:
-
-```bash
-baselines/openpi/third_party/openpi
-```
-
+Install the official OpenPI repository located at: `baselines/openpi/third_party/openpi`. 
 Please refer to the official OpenPI README for detailed setup instructions.
+
+i.e.
+```
+cd baselines/openpi/third_party/openpi
+GIT_LFS_SKIP_SMUDGE=1 uv sync
+GIT_LFS_SKIP_SMUDGE=1 uv pip install -e .
+
+# install genmanip client for ebench evaluation
+cd path/to/genmanip-client
+uv pip install -e .[full_numpy1]
+```
 
 ### 2. Add EBench-Specific Files
 
@@ -25,17 +31,8 @@ baselines/openpi/scripts/
 
 Layer these files on top of the official OpenPI codebase. This can be done by either updating `PYTHONPATH` or copying the files to the corresponding locations in the OpenPI repository.
 
-### 3. Configure Evaluation Settings
 
-Before running evaluation, modify the configuration file:
-
-```bash
-scripts/launch_pi_onlineeval.sh
-```
-
-Please make sure that the model path, dataset path, environment settings, and output directory are correctly specified.
-
-### 4. Download EBench Post-Trained Models
+### 3. Download EBench Post-Trained Models
 
 The post-trained OpenPI models on EBench are available at:
 
@@ -55,3 +52,5 @@ Launch the evaluation with:
 ```bash
 bash scripts/launch_pi_onlineeval.sh
 ```
+
+Please make sure that the model path, dataset path, environment settings, and output directory are correctly specified.

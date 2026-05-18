@@ -110,13 +110,13 @@ if __name__ == "__main__":
         obs = eval_client.reset()
         eval_finished = False
         while not eval_finished:
-            
-            if obs[ids]["obs"]["reset"]:
-                pass
             action_chunk = pi0_client.get_action(obs)
-            obs, eval_finished = eval_client.step(action_chunk)
+            try:
+                obs, eval_finished = eval_client.step(action_chunk)
+            except Exception as e:
+                eval_client.close()
+                eval_client = EvalClient(base_url=base_url, worker_ids=worker_ids, run_id=run_id, token=token)
+                obs = eval_client.reset()
             
     finally:
         eval_client.close()
-
-    
