@@ -15,7 +15,7 @@ English | [简体中文](README.zh-CN.md)
 
 <p>
   <a href="https://internrobotics.github.io/EBench-doc/"><img alt="Project Page" src="https://img.shields.io/badge/Project%20Page-EBench%20Docs-1f6feb?style=for-the-badge&logo=readthedocs&logoColor=white"></a>
-  <img alt="arXiv" src="https://img.shields.io/badge/arXiv-coming%20soon-lightgrey?style=for-the-badge&logo=arxiv&logoColor=white">
+  <a href="https://arxiv.org/pdf/2606.18239"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-EBench-1f6feb?style=for-the-badge&logo=arxiv&logoColor=white"></a>
   <a href="https://internrobotics.shlab.org.cn/eval"><img alt="Leaderboard" src="https://img.shields.io/badge/Leaderboard-Online%20Challenge-22c55e?style=for-the-badge&logoColor=white"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge"></a>
 </p>
