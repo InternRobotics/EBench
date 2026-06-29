@@ -161,7 +161,7 @@ The 24/7 evaluation platform at [internrobotics.shlab.org.cn/eval](https://inter
 
 ## Citation
 
-A preprint is forthcoming. In the meantime:
+If you find this work helpful to your research, please consider citing it:
 
 ```bibtex
 @article{gao2026ebench,
