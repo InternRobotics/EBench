@@ -164,12 +164,11 @@ The 24/7 evaluation platform at [internrobotics.shlab.org.cn/eval](https://inter
 A preprint is forthcoming. In the meantime:
 
 ```bibtex
-@misc{ebench2026,
-  title  = {EBench: Elemental Mobile Manipulation Benchmark},
-  author = {Shanghai AI Laboratory},
-  year   = {2026},
-  note   = {Preprint coming soon},
-  url    = {https://internrobotics.github.io/EBench-doc/}
+@article{gao2026ebench,
+  title={EBench: Elemental Diagnosis of Generalist Mobile Manipulation Policies},
+  author={Gao, Ning and Zheng, Jinliang and Gao, Xing and Ma, Haoxiang and Wang, Hanqing and Wang, Yukai and Chen, Jiantong and Chen, Zanxin and Zhang, Shujie and Jia, Mingda and others},
+  journal={arXiv preprint arXiv:2606.18239},
+  year={2026}
 }
 ```
 
