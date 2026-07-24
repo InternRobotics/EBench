@@ -35,11 +35,18 @@
 
 ---
 
-## 最近更新
+## 🔥 最近更新
 
-- **2026-07 — 评测与分析客户端。** 独立的 [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 现已提供 `gmp` CLI，可用于提交和监控评测、绘制动作与状态曲线，并交互式查看已保存的 episode。在模型环境中安装后，运行 `gmp --help` 即可开始使用。
-- **2026-06 — 交互式 HTML 报告。** 新增 [`assets/analyse_report.html`](assets/analyse_report.html)，可视化对比 **π0**、**π0.5**、**X-VLA** 和 **InternVLA-A1** 四个参考模型的能力画像、泛化能力拆解与任务级结果。**[打开交互式报告 →](https://htmlpreview.github.io/?https://github.com/InternRobotics/EBench/blob/main/assets/analyse_report.html)**
-- **2026-06 — EBench 正式发布。** 评测基准、参考 Baseline、训练数据和训测隔离的在线评测现已公开。
+> [!TIP]
+> ### 📊 四模型交互式报告
+> 从能力画像、泛化维度和具体任务等角度对比 **π0 · π0.5 · X-VLA · InternVLA-A1**。
+>
+> **[打开交互式分析 →](https://htmlpreview.github.io/?https://github.com/InternRobotics/EBench/blob/main/assets/analyse_report.html)** · [查看版本化 HTML](assets/analyse_report.html)
+
+| 日期 | 重要更新 |
+| :--- | :--- |
+| **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |
+| **2026-06** | 🚀 **正式发布** — EBench、参考 Baseline、训练数据及训测隔离的在线评测现已公开。 |
 
 ## EBench 是什么？
 

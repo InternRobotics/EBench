@@ -35,11 +35,18 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
-## Recent Updates
+## 🔥 Recent Updates
 
-- **2026-07 — Evaluation and analysis client.** The standalone [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) now provides the `gmp` CLI for submitting and monitoring evaluations, plotting action/state traces, and interactively visualizing saved episodes. Install it in your model environment and run `gmp --help` to get started.
-- **2026-06 — Interactive HTML report.** We added [`assets/analyse_report.html`](assets/analyse_report.html), a visual comparison of four reference models — **π0**, **π0.5**, **X-VLA**, and **InternVLA-A1** — covering capability profiles, generalization breakdowns, and task-level results. **[Open the interactive report →](https://htmlpreview.github.io/?https://github.com/InternRobotics/EBench/blob/main/assets/analyse_report.html)**
-- **2026-06 — EBench released.** The benchmark, reference baselines, training data, and held-out online evaluation are now publicly available.
+> [!TIP]
+> ### 📊 Interactive Four-Model Report
+> Compare **π0 · π0.5 · X-VLA · InternVLA-A1** across capability profiles, generalization axes, and individual tasks.
+>
+> **[Launch interactive analysis →](https://htmlpreview.github.io/?https://github.com/InternRobotics/EBench/blob/main/assets/analyse_report.html)** · [View versioned HTML](assets/analyse_report.html)
+
+| Date | Highlight |
+| :--- | :--- |
+| **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
+| **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
 
 ## What is EBench?
 
@@ -175,7 +182,6 @@ EBench welcomes community-maintained training recipes, evaluation adapters, and 
 
 | Project | EBench integration | Status |
 | --- | --- | --- |
-| [InternVLA-A1](https://github.com/InternRobotics/InternVLA-A-series/tree/InternVLA-A1) | The runnable reference adapter is included in [`baselines/InternVLA-A1`](baselines/InternVLA-A1). | Supported |
 | [InternVLA-A1.5](https://github.com/InternRobotics/InternVLA-A-series) | The upstream repository reports EBench results; a native evaluation entry is being prepared by the maintainers. | Results available / integration pending |
 | [Qwen-RobotManip](https://github.com/QwenLM/Qwen-VLA) | Community evaluation and an upstream EBench entry are being coordinated with the maintainers. | Integration pending |
 
