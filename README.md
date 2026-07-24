@@ -48,6 +48,15 @@ English | [简体中文](README.zh-CN.md)
 | **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
 | **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
 
+## Community-Reported Results
+
+We are glad to see EBench used by the broader VLA community. The results below are reported by the respective papers and have not been independently reproduced by the EBench team.
+
+| Model | Paper | Reported EBench overall SR |
+| --- | --- | ---: |
+| **Qwen-RobotManip** | [*Alignment Unlocks Scale for Robotic Manipulation Foundation Models*](https://arxiv.org/abs/2606.17846) | **45.6%** |
+| **InternVLA-A1.5** | [*Unifying Understanding, Latent Foresight, and Action for Compositional Generalization*](https://arxiv.org/abs/2607.04988) | **35.2%** |
+
 ## What is EBench?
 
 EBench is an indoor VLA manipulation benchmark built on NVIDIA Isaac Sim. Instead of compressing a model's behaviour into a single overall success rate, it produces a **multi-axis capability profile** that exposes *what* a model is good at — and where it overfits.
@@ -176,16 +185,6 @@ cd baselines/InternVLA-A1 && bash eval_pjsim.sh
 
 To plug your own model in, follow the contract documented at [Integrate Your Own Model](https://internrobotics.github.io/EBench-doc/evaluation/custom-model/).
 
-## Community Integrations
-
-EBench welcomes community-maintained training recipes, evaluation adapters, and model implementations. These integrations remain in their upstream repositories so that improvements can be shared directly with each model's users.
-
-| Project | EBench integration | Status |
-| --- | --- | --- |
-| [InternVLA-A1.5](https://github.com/InternRobotics/InternVLA-A-series) | The upstream repository reports EBench results; a native evaluation entry is being prepared by the maintainers. | Results available / integration pending |
-| [Qwen-RobotManip](https://github.com/QwenLM/Qwen-VLA) | Community evaluation and an upstream EBench entry are being coordinated with the maintainers. | Integration pending |
-
-Maintaining an EBench adapter in another repository? Open an issue or pull request to add it here and help keep the two projects connected.
 
 ## Online challenge
 

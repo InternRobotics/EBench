@@ -48,6 +48,16 @@
 | **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |
 | **2026-06** | 🚀 **正式发布** — EBench、参考 Baseline、训练数据及训测隔离的在线评测现已公开。 |
 
+## 社区报告结果
+
+我们很高兴看到更多 VLA 社区工作使用 EBench。下列结果由对应论文报告，尚未经 EBench 团队独立复现。
+
+| 模型 | 论文 | 论文报告的 EBench 总体成功率 |
+| --- | --- | ---: |
+| **Qwen-RobotManip** | [*Alignment Unlocks Scale for Robotic Manipulation Foundation Models*](https://arxiv.org/abs/2606.17846) | **45.6%** |
+| **InternVLA-A1.5** | [*Unifying Understanding, Latent Foresight, and Action for Compositional Generalization*](https://arxiv.org/abs/2607.04988) | **35.2%** |
+
+
 ## EBench 是什么？
 
 EBench 是一个基于 NVIDIA Isaac Sim 的室内 VLA 操作仿真评测框架。它不再把模型行为压缩成一个总成功率，而是产出一份**多维能力画像**，让模型"强在哪里、弱在哪里"变得可读、可比、可定位。
@@ -126,16 +136,6 @@ gmp status
 
 接入自己的模型请参考[接入自定义模型](https://internrobotics.github.io/EBench-doc/zh-cn/evaluation/custom-model/)。
 
-## 社区集成
-
-EBench 欢迎社区维护的训练方案、评测适配器与模型实现。这些集成保留在各自的上游仓库中，使改进能够直接与对应模型的用户共享。
-
-| 项目 | EBench 集成情况 | 状态 |
-| --- | --- | --- |
-| [InternVLA-A1.5](https://github.com/InternRobotics/InternVLA-A-series) | 上游仓库已公布 EBench 结果，维护者正在准备原生评测入口。 | 已有结果 / 集成中 |
-| [Qwen-RobotManip](https://github.com/QwenLM/Qwen-VLA) | 正在与维护者协调社区评测和上游 EBench 入口。 | 集成中 |
-
-如果你在其他仓库中维护 EBench 适配器，欢迎提交 Issue 或 Pull Request，将项目添加到此处并建立双向连接。
 
 ## 在线挑战赛
 
