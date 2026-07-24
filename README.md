@@ -39,7 +39,7 @@ English | [简体中文](README.zh-CN.md)
 
 > [!TIP]
 > ### 📊 Interactive Four-Model Report
-> Compare **π0 · π0.5 · X-VLA · InternVLA-A1** across capability profiles, generalization axes, and individual tasks.
+> A new systematic diagnostic analysis tool automatically generates a **5-axis capability diagnosis** — including atomic skills and manipulation precision — and a **4-dimensional generalization analysis** after evaluation. Interactively select results and compare them across multiple dimensions with four baselines: **π0 · π0.5 · X-VLA · InternVLA-A1**.
 >
 > **[Launch interactive analysis →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)** 
 
@@ -47,15 +47,6 @@ English | [简体中文](README.zh-CN.md)
 | :--- | :--- |
 | **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
 | **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
-
-## Community-Reported Results
-
-We are glad to see EBench used by the broader VLA community. The results below are reported by the respective papers and have not been independently reproduced by the EBench team.
-
-| Model | Paper | Reported EBench overall SR |
-| --- | --- | ---: |
-| **Qwen-RobotManip** | [*Alignment Unlocks Scale for Robotic Manipulation Foundation Models*](https://arxiv.org/abs/2606.17846) | **45.6%** |
-| **InternVLA-A1.5** | [*Unifying Understanding, Latent Foresight, and Action for Compositional Generalization*](https://arxiv.org/abs/2607.04988) | **35.2%** |
 
 ## What is EBench?
 

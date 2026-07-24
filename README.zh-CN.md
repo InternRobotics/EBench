@@ -39,7 +39,7 @@
 
 > [!TIP]
 > ### 📊 四模型交互式报告
-> 从能力画像、泛化维度和具体任务等角度对比 **π0 · π0.5 · X-VLA · InternVLA-A1**。
+> 新增体系诊断分析工具，评测完成后自动生成原子技能、操作精度等5轴能力诊断与4维泛化分析， 可以交互式选择与4个 baseline 多维对比 **π0 · π0.5 · X-VLA · InternVLA-A1**。
 >
 > **[打开交互式分析 →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)** 
 
@@ -47,16 +47,6 @@
 | :--- | :--- |
 | **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |
 | **2026-06** | 🚀 **正式发布** — EBench、参考 Baseline、训练数据及训测隔离的在线评测现已公开。 |
-
-## 社区报告结果
-
-我们很高兴看到更多 VLA 社区工作使用 EBench。下列结果由对应论文报告，尚未经 EBench 团队独立复现。
-
-| 模型 | 论文 | 论文报告的 EBench 总体成功率 |
-| --- | --- | ---: |
-| **Qwen-RobotManip** | [*Alignment Unlocks Scale for Robotic Manipulation Foundation Models*](https://arxiv.org/abs/2606.17846) | **45.6%** |
-| **InternVLA-A1.5** | [*Unifying Understanding, Latent Foresight, and Action for Compositional Generalization*](https://arxiv.org/abs/2607.04988) | **35.2%** |
-
 
 ## EBench 是什么？
 
