@@ -41,7 +41,7 @@
 > ### 📊 四模型交互式报告
 > 从能力画像、泛化维度和具体任务等角度对比 **π0 · π0.5 · X-VLA · InternVLA-A1**。
 >
-> **[打开交互式分析 →](https://htmlpreview.github.io/?https://github.com/InternRobotics/EBench/blob/main/assets/analyse_report.html)** · [查看版本化 HTML](assets/analyse_report.html)
+> **[打开交互式分析 →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)** 
 
 | 日期 | 重要更新 |
 | :--- | :--- |

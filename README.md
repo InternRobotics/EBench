@@ -41,7 +41,7 @@ English | [简体中文](README.zh-CN.md)
 > ### 📊 Interactive Four-Model Report
 > Compare **π0 · π0.5 · X-VLA · InternVLA-A1** across capability profiles, generalization axes, and individual tasks.
 >
-> **[Launch interactive analysis →](https://htmlpreview.github.io/?https://github.com/InternRobotics/EBench/blob/main/assets/analyse_report.html)** · [View versioned HTML](assets/analyse_report.html)
+> **[Launch interactive analysis →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)** 
 
 | Date | Highlight |
 | :--- | :--- |

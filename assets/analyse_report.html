@@ -22,8 +22,13 @@
   section:first-of-type .section-head{border-top:none;padding-top:0}
   h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:24px;letter-spacing:-.005em;margin:0}
   .sub{color:var(--muted);font-size:13px}
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 8px;box-shadow:0 1px 2px rgba(0,0,0,.02);overflow:hidden;min-width:0;position:relative}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 8px;box-shadow:0 1px 2px rgba(0,0,0,.02);overflow:visible;min-width:0;position:relative}
   .panel > .js-plotly-plot, .panel > div:not(.svg-export-btn){width:100% !important;min-width:0}
+  @media(max-width:700px){
+    .wrap{padding:24px 12px 72px}
+    .panel{padding:12px 8px 6px}
+    h1{font-size:30px}
+  }
 
   /* SVG-export button on each panel (top-right) */
   .svg-export-btn{
@@ -840,7 +845,7 @@ function init(){
     const grid = $('cluster_grid');
     grid.innerHTML = '';
     grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(540px, 1fr))';
+    grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(min(540px, 100%), 1fr))';
     grid.style.gap = '18px';
     Object.keys(P.cluster_map).forEach(cat => {
       const wrap = document.createElement('div');
