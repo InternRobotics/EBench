@@ -35,6 +35,17 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
+## 🔥 Recent Updates
+
+#### 💡 Interactive Analysis Tool
+
+A new systematic diagnostic tool, **gmp analyse**, automatically produces a **five-axis capability** profile, such as atomic skills and manipulation precision, together with a **four-dimensional generalization analysis** after evaluation. Users can interactively select evaluation results and compare them with four reference baselines, **π0, π0.5, X-VLA, and InternVLA-A1**, across multiple capability and generalization dimensions. **[Example →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)**
+
+| Date | Highlight |
+| :--- | :--- |
+| **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
+| **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
+
 ## What is EBench?
 
 EBench is an indoor VLA manipulation benchmark built on NVIDIA Isaac Sim. Instead of compressing a model's behaviour into a single overall success rate, it produces a **multi-axis capability profile** that exposes *what* a model is good at — and where it overfits.
@@ -69,6 +80,8 @@ EBench is split across a small constellation of repositories. **This repo** is t
 ```
 EBench/
 ├── baselines/       # Reference policies (one sub-folder per baseline)
+├── third_party/
+│   └── genmanip-client/  # Pinned gmp CLI and Python client
 ├── scripts/         # Evaluation and analysis scripts
 ├── assets/          # Static assets used by this README
 ├── LICENSE
@@ -83,11 +96,17 @@ EBench runs as a client–server system. The server runs Isaac Sim; the client (
 # 1. Bring up the server  →  see Environment Setup
 #    https://internrobotics.github.io/EBench-doc/getting-started/environment/
 
-# 2. Install the client in your model env
-git clone https://github.com/InternRobotics/genmanip-client.git
-cd genmanip-client && pip install -e .
+# 2. Clone EBench and its pinned dependencies
+git clone --recursive https://github.com/InternRobotics/EBench.git
+cd EBench
 
-# 3. Run an evaluation
+# If EBench was already cloned without --recursive:
+git submodule update --init --recursive
+
+# 3. Install the client in your model environment
+pip install -e third_party/genmanip-client
+
+# 4. Run an evaluation
 gmp submit ebench/generalist/test --run_id my_first_run
 gmp eval  -a r5a -g lift2 --worker_ids 0
 gmp status
@@ -154,6 +173,7 @@ cd baselines/InternVLA-A1 && bash eval_pjsim.sh
 ```
 
 To plug your own model in, follow the contract documented at [Integrate Your Own Model](https://internrobotics.github.io/EBench-doc/evaluation/custom-model/).
+
 
 ## Online challenge
 

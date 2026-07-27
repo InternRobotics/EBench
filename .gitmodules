@@ -4,3 +4,6 @@
 [submodule "baselines/InternVLA-A1/third_party/InternVLA-A1"]
 	path = baselines/InternVLA-A1/third_party/InternVLA-A1
 	url = https://github.com/InternRobotics/InternVLA-A1
+[submodule "third_party/genmanip-client"]
+	path = third_party/genmanip-client
+	url = https://github.com/InternRobotics/genmanip-client.git

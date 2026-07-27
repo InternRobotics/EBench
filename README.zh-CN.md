@@ -35,6 +35,19 @@
 
 ---
 
+## 🔥 最近更新
+
+#### 💡 交互式分析工具
+
+新增体系化诊断工具 **`gmp analyse`**，可在评测完成后自动生成包含原子技能、操作精度等维度的**五轴能力画像**，以及**四维泛化分析**。用户可以交互式选择评测结果，并从多个能力与泛化维度与 **π0、π0.5、X-VLA 和 InternVLA-A1** 四个参考 Baseline 进行对比。
+
+**[示例 →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)**
+
+| 日期 | 重要更新 |
+| :--- | :--- |
+| **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |
+| **2026-06** | 🚀 **正式发布** — EBench、参考 Baseline、训练数据及训测隔离的在线评测现已公开。 |
+
 ## EBench 是什么？
 
 EBench 是一个基于 NVIDIA Isaac Sim 的室内 VLA 操作仿真评测框架。它不再把模型行为压缩成一个总成功率，而是产出一份**多维能力画像**，让模型"强在哪里、弱在哪里"变得可读、可比、可定位。
@@ -69,6 +82,8 @@ EBench 由若干仓库组成，**本仓库是项目入口**：
 ```
 EBench/
 ├── baselines/       # 参考策略实现（每个 baseline 一个子目录）
+├── third_party/
+│   └── genmanip-client/  # 固定版本的 gmp CLI 与 Python 客户端
 ├── scripts/         # 评测与结果分析脚本
 ├── assets/          # 本 README 使用的静态素材
 ├── LICENSE
@@ -83,11 +98,17 @@ EBench 采用 client–server 架构：服务端运行 Isaac Sim，客户端（`
 # 1. 启动服务端  →  详见环境配置
 #    https://internrobotics.github.io/EBench-doc/zh-cn/getting-started/environment/
 
-# 2. 在模型环境中安装客户端
-git clone https://github.com/InternRobotics/genmanip-client.git
-cd genmanip-client && pip install -e .
+# 2. 克隆 EBench 及其固定版本的依赖
+git clone --recursive https://github.com/InternRobotics/EBench.git
+cd EBench
 
-# 3. 运行一次评测
+# 如果此前 clone 时没有使用 --recursive：
+git submodule update --init --recursive
+
+# 3. 在模型环境中安装客户端
+pip install -e third_party/genmanip-client
+
+# 4. 运行一次评测
 gmp submit ebench/generalist/test --run_id my_first_run
 gmp eval  -a r5a -g lift2 --worker_ids 0
 gmp status
@@ -104,6 +125,7 @@ gmp status
 参考策略放在 `baselines/<name>/` 下，每个 baseline 自带 README 与 `gmp eval` 兼容的入口命令。EBench 已在 **π0**、**π0.5**、**XVLA**、**InternVLA-A1** 上完成首轮验证 —— 当前结果与各维度诊断报告请见[排行榜](https://internrobotics.shlab.org.cn/eval)。
 
 接入自己的模型请参考[接入自定义模型](https://internrobotics.github.io/EBench-doc/zh-cn/evaluation/custom-model/)。
+
 
 ## 在线挑战赛
 
