@@ -50,7 +50,6 @@ class EBenchInputs(transforms.DataTransformFn):
     # Determines which model will be used.
     # Do not change this for your own dataset.
     model_type: _model.ModelType
-    right_wrist_mask: bool = True
 
     def __call__(self, data: dict) -> dict:
         if self.model_type not in (_model.ModelType.PI0, _model.ModelType.PI05):
@@ -63,7 +62,7 @@ class EBenchInputs(transforms.DataTransformFn):
 
         inputs = {
             # Base state is intentionally used only to form targets, never model state.
-            "state": np.concatenate([joint_state, gripper_state], axis=-1),
+            "state": np.concatenate([joint_state, gripper_state]),
             "image": {
                 "base_0_rgb": _parse_image(data["images/head"]),
                 "left_wrist_0_rgb": _parse_image(data["images/hand_left"]),
@@ -72,7 +71,7 @@ class EBenchInputs(transforms.DataTransformFn):
             "image_mask": {
                 "base_0_rgb": np.True_,
                 "left_wrist_0_rgb": np.True_,
-                "right_wrist_0_rgb": np.bool_(self.right_wrist_mask),
+                "right_wrist_0_rgb": np.True_,
             },
         }
 
@@ -89,9 +88,9 @@ class EBenchInputs(transforms.DataTransformFn):
             # Every target uses the state at the beginning of its action chunk as the origin.
             inputs["actions"] = np.concatenate(
                 [
-                    joint_actions - np.expand_dims(joint_state, axis=-2),
+                    joint_actions - joint_state[np.newaxis, ...],
                     gripper_actions,
-                    base_actions - np.expand_dims(base_state, axis=-2),
+                    base_actions - base_state[np.newaxis, ...],
                 ],
                 axis=-1,
             )
