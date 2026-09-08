@@ -54,3 +54,13 @@ bash scripts/launch_pi_onlineeval.sh
 ```
 
 Please make sure that the model path, dataset path, environment settings, and output directory are correctly specified.
+
+## Fine-tuning
+
+Follow the [upstream OpenPI fine-tuning guide](third_party/openpi/README.md#fine-tuning-base-models-on-your-own-data) after applying the EBench-specific files above. Use `pi05_ebench_all` or `pi0_ebench_all` for the generalist track, or the corresponding `_mobile` and `_tabletop` configs for specialist training. Set the dataset `repo_id` and model paths in `src/openpi/training/config.py` before running the upstream training commands.
+
+Recompute normalization statistics with `scripts/compute_norm_stats.py --config-name <config_name>` before fine-tuning with the updated data transforms, and use the statistics saved with the resulting checkpoint for evaluation.
+
+## Update Notes
+
+**September 8, 2026:** We updated the OpenPI baseline configurations and EBench data-processing pipeline, including action-chunk sampling, relative joint and base targets, and right-wrist image masking. Use the updated EBench configs, policy transforms, and evaluation client together when evaluating the baseline or reproducing results.

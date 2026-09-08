@@ -36,9 +36,16 @@ class Pi0Client:
             "states/base": obs[self.ids]["obs"]["state.base"],
             "prompt": obs[self.ids]["obs"]["instruction"],
         }
+        if "state.ee_pose" in obs[self.ids]["obs"]:
+            observation["states/ee_pose"] = obs[self.ids]["obs"]["state.ee_pose"]
         return observation
 
     def prep_output(self, action_chunk):
+        action_chunk = np.asarray(action_chunk)
+        if action_chunk.ndim != 2 or action_chunk.shape[1] != 19:
+            raise ValueError(f"Expected action chunk of shape (T, 19), got {action_chunk.shape}")
+        if not 1 <= self.horizon <= len(action_chunk):
+            raise ValueError(f"horizon must be between 1 and {len(action_chunk)}, got {self.horizon}")
         actions = []
         last_base_motion = np.zeros(3)
         for i in range(self.horizon):
@@ -109,12 +116,19 @@ if __name__ == "__main__":
     try:
         obs = eval_client.reset()
         eval_finished = False
+        consecutive_errors = 0
         while not eval_finished:
-            action_chunk = pi0_client.get_action(obs)
             try:
+                action_chunk = pi0_client.get_action(obs)
                 obs, eval_finished = eval_client.step(action_chunk)
+                consecutive_errors = 0
             except Exception as e:
+                consecutive_errors += 1
+                if consecutive_errors >= 3:
+                    raise
+                print(f"Exception during eval: {e}. Resetting workers and continuing.", flush=True)
                 eval_client.close()
+                pi0_client = Pi0Client(args.model_host, args.model_port, ids, args.horizon)
                 eval_client = EvalClient(base_url=base_url, worker_ids=worker_ids, run_id=run_id, token=token)
                 obs = eval_client.reset()
             
