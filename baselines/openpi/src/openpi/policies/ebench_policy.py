@@ -85,10 +85,10 @@ class EBenchInputs(transforms.DataTransformFn):
             _check_last_dim("actions/base", base_actions, BASE_DIM)
             _check_last_dim("states/base", base_state, BASE_DIM)
 
-            # Every target uses the state at the beginning of its action chunk as the origin.
+            # Every target uses the base state at the beginning of its base action chunk as the origin.
             inputs["actions"] = np.concatenate(
                 [
-                    joint_actions - joint_state[np.newaxis, ...],
+                    joint_actions,
                     gripper_actions,
                     base_actions - base_state[np.newaxis, ...],
                 ],

@@ -63,4 +63,4 @@ Recompute normalization statistics with `scripts/compute_norm_stats.py --config-
 
 ## Update Notes
 
-**September 8, 2026:** We updated the OpenPI baseline configurations and EBench data-processing pipeline, including action-chunk sampling, relative joint and base targets, and right-wrist image masking. Use the updated EBench configs, policy transforms, and evaluation client together when evaluating the baseline or reproducing results.
+**September 8, 2026:** We updated the OpenPI baseline configurations, including a unified configuration file for both training and evaluation and a fix for right-wrist image masking. Use the updated EBench configs, policy transforms, and evaluation client together when evaluating the baseline or reproducing results.

@@ -489,22 +489,23 @@ class LeRobotEBenchDataConfig(DataConfigFactory):
         )
     )
     action_sequence_keys: Sequence[str] = ("action.joints", "action.gripper", "action.base")
+    extra_delta_transform: bool = True
 
     @override
     def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
         data_transforms = _transforms.Group(
-            inputs=[
-                ebench_policy.EBenchInputs(
-                    model_type=model_config.model_type,
-                )
-            ],
-            outputs=[
-                # The EBench controller consumes absolute joint targets. Gripper stays
-                # absolute and base stays relative to the beginning of the chunk.
-                _transforms.AbsoluteActions(_transforms.make_bool_mask(12, -4)),
-                ebench_policy.EBenchOutputs(),
-            ],
+            inputs=[ebench_policy.EBenchInputs(model_type=model_config.model_type)],
+            outputs=[ebench_policy.EBenchOutputs()],
         )
+
+        if self.extra_delta_transform:
+            delta_action_mask = _transforms.make_bool_mask(12, -4)
+            data_transforms = data_transforms.push(
+                inputs=[_transforms.DeltaActions(delta_action_mask)],
+                outputs=[_transforms.AbsoluteActions(delta_action_mask)],
+            )
+
+
         return dataclasses.replace(
             self.create_base_config(assets_dirs, model_config),
             repack_transforms=self.repack_transforms,
@@ -617,7 +618,6 @@ _CONFIGS = [
         data=LeRobotEBenchDataConfig(
             repo_id="your/generalist/repo_id",
             base_config=DataConfig(prompt_from_task=True),
-            action_sequence_keys=["action.joints","action.gripper","action.base"],
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi0_base/params"),
         pytorch_weight_path="/path/to/your/pytorch_weight_path",
@@ -640,7 +640,6 @@ _CONFIGS = [
         data=LeRobotEBenchDataConfig(
             repo_id="your/generalist/repo_id",
             base_config=DataConfig(prompt_from_task=True),
-            action_sequence_keys=["action.joints","action.gripper","action.base"],
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
         pytorch_weight_path="/path/to/your/pytorch_weight_path",
