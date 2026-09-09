@@ -45,6 +45,7 @@
 
 | 日期 | 重要更新 |
 | :--- | :--- |
+| **2026-09** | 🛠️ **OpenPI Baseline 更新** — 更新 π0 / π0.5 配置。评测与复现结果时，请使用更新后的 Baseline 代码。详见[更新说明](baselines/openpi/README.md#update-notes)。 |
 | **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |
 | **2026-06** | 🚀 **正式发布** — EBench、参考 Baseline、训练数据及训测隔离的在线评测现已公开。 |
 

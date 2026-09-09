@@ -43,6 +43,7 @@ A new systematic diagnostic tool, **gmp analyse**, automatically produces a **fi
 
 | Date | Highlight |
 | :--- | :--- |
+| **2026-09** | 🛠️ **OpenPI baseline update** — Updated π0 / π0.5 configs. Please use the updated baseline code for evaluation and reproducing results. See the [update notes](baselines/openpi/README.md#update-notes). |
 | **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
 | **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
 

@@ -36,6 +36,8 @@ class Pi0Client:
             "states/base": obs[self.ids]["obs"]["state.base"],
             "prompt": obs[self.ids]["obs"]["instruction"],
         }
+        if "state.ee_pose" in obs[self.ids]["obs"]:
+            observation["states/ee_pose"] = obs[self.ids]["obs"]["state.ee_pose"]
         return observation
 
     def prep_output(self, action_chunk):
@@ -110,13 +112,15 @@ if __name__ == "__main__":
         obs = eval_client.reset()
         eval_finished = False
         while not eval_finished:
-            action_chunk = pi0_client.get_action(obs)
             try:
+                action_chunk = pi0_client.get_action(obs)
                 obs, eval_finished = eval_client.step(action_chunk)
             except Exception as e:
                 eval_client.close()
+                pi0_client = Pi0Client(args.model_host, args.model_port, ids, args.horizon)
                 eval_client = EvalClient(base_url=base_url, worker_ids=worker_ids, run_id=run_id, token=token)
                 obs = eval_client.reset()
+                print(f"Exception during eval: {e}. Resetting workers and continuing.")
             
     finally:
         eval_client.close()
