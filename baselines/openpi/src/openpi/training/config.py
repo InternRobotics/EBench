@@ -466,8 +466,12 @@ class LeRobotDROIDDataConfig(DataConfigFactory):
 class LeRobotEBenchDataConfig(DataConfigFactory):
     """Data mapping for the EBench generalist Lift2 repository."""
 
-    repack_transforms: tyro.conf.Suppress[_transforms.Group] = dataclasses.field(
-        default=_transforms.Group(
+    action_sequence_keys: Sequence[str] = ("action.joints", "action.gripper", "action.base")
+    extra_delta_transform: bool = True
+
+    @override
+    def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
+        repack_transforms = _transforms.Group(
             inputs=[
                 _transforms.RepackTransform(
                     {
@@ -487,12 +491,7 @@ class LeRobotEBenchDataConfig(DataConfigFactory):
                 )
             ]
         )
-    )
-    action_sequence_keys: Sequence[str] = ("action.joints", "action.gripper", "action.base")
-    extra_delta_transform: bool = True
 
-    @override
-    def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
         data_transforms = _transforms.Group(
             inputs=[ebench_policy.EBenchInputs(model_type=model_config.model_type)],
             outputs=[ebench_policy.EBenchOutputs()],
@@ -508,7 +507,7 @@ class LeRobotEBenchDataConfig(DataConfigFactory):
 
         return dataclasses.replace(
             self.create_base_config(assets_dirs, model_config),
-            repack_transforms=self.repack_transforms,
+            repack_transforms=repack_transforms,
             data_transforms=data_transforms,
             model_transforms=ModelTransformFactory()(model_config),
             action_sequence_keys=self.action_sequence_keys,
