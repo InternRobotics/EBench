@@ -33,6 +33,26 @@ Use `EvalClient.reset()` for initial observations and `step()` for execution; in
 
 Never execute the remainder of an old chunk after an episode reset. For multiple workers, keep history/chunks independent and handle worker-specific resets. If a step times out, execution may already have occurred: do not blindly resend actions. Use bounded client recovery and fresh observations, discard stale actions, and record the interruption. Close the client in `finally` so recordings/results are flushed.
 
+## Connect the adapter to online evaluation
+
+Expose evaluation URL, run ID, token, and worker IDs as runtime settings rather than hardcoding them. For a new online run, follow the queue-and-launch sequence in [ebench-evaluate](../ebench-evaluate/SKILL.md): call `gmp online submit --print_endpoint`, wait for readiness, and parse its returned `endpoint` and `task_id`. No evaluation endpoint is required from the user before this submission.
+
+Only after both values are available, construct the client using the returned assignment:
+
+```python
+import os
+from genmanip_client import EvalClient
+
+client = EvalClient(
+    base_url=os.environ["EVAL_URL"],  # online submit response: endpoint
+    run_id=os.environ["RUN_ID"],     # online submit response: task_id
+    token=os.environ["TOKEN"],
+    worker_ids=["0"],
+)
+```
+
+Connect this client to the policy's reset/inference/step loop and close it in `finally`. The platform base URL is used for queue submission; `EvalClient.base_url` is the returned evaluation endpoint. Do not create/reset workers while the task is still queued, or resubmit an online task each time the adapter reconnects. Adapter implementation alone does not require submitting a live task; use this flow when running the requested online evaluation.
+
 ## Validate the adapter
 
 Use a representative local observation or fixture to check preprocessing, finite action values, dimensions, channel order, inverse normalization, chunk-length boundaries, and reset behavior without a simulator. Include a known-value action conversion example that would expose swapped channels or incorrect delta semantics; shape-only assertions are insufficient.

@@ -26,6 +26,8 @@ Resolve paths from the EBench repository root. Read `README.md`, the selected `b
 
 ## Verify and hand off
 
+For a new online evaluation, collect the platform URL and locally configured API token; the user does not need an evaluation endpoint or task ID yet. Check `gmp online submit --help` and availability of `jq` if using the shell example in [ebench-evaluate](../ebench-evaluate/SKILL.md). After local prerequisites pass, an evaluation request proceeds through `gmp online submit` → queue/readiness → returned `endpoint` and `task_id` → model launch using that endpoint and `run_id=task_id`. A setup-only request stops at reporting readiness. Reuse an existing task when supplied.
+
 Check imports and `gmp --help` in the selected environment before allocating a full run. Inspect CLI source if imports are unavailable. A connectivity test with `gmp eval` uses fake actions and is not a model evaluation; label it accordingly and keep its run separate from reported model results.
 
 Report the interpreter/environment, pinned revisions, model path/config, dependency gaps, and launch command with credential placeholders. Distinguish checks actually run from inferred compatibility. Do not claim readiness while weights, server access, or imports remain unverified. If asked to proceed with evaluation, continue within the existing request once prerequisites are satisfied.

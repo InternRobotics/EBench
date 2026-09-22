@@ -21,6 +21,40 @@ Record a small manifest beside the run logs: EBench and submodule commits, local
 
 The platform URL, returned evaluation endpoint, and an OpenPI model server address serve different purposes. Do not interchange them. Preserve credentials through local environment/configuration, omit them from reports, and avoid shell tracing of authenticated commands.
 
+## Online evaluation: queue, obtain endpoint, then evaluate
+
+For a new online evaluation, the agent should complete this sequence rather than require the user to obtain an endpoint manually. First verify the local model environment/checkpoint and obtain the platform URL and locally configured token. A new task does not need a pre-existing evaluation URL or task ID.
+
+1. **Submit and wait in the queue.** `gmp online submit` creates the task and polls until evaluation resources are ready. Run it as a monitored process; while pending, report that the task is waiting, not evaluating. This Bash example requires `jq` and uses a configurable wait budget:
+
+   ```bash
+   set -euo pipefail
+   : "${PLATFORM_URL:?Set the online platform URL}"
+   : "${TOKEN:?Set the API token locally}"
+   : "${MODEL_NAME:?Set the model name}"
+   READY_JSON=$(gmp online submit \
+     --base_url "$PLATFORM_URL" \
+     --token "$TOKEN" \
+     --model_name "$MODEL_NAME" \
+     --model_type VLA \
+     --benchmark_set EBench \
+     --timeout "${QUEUE_TIMEOUT_SECONDS:-600}" \
+     --print_endpoint)
+
+   # Parse only a successful ready response; never launch with empty values.
+   EVAL_URL=$(printf '%s' "$READY_JSON" | jq -er '.endpoint | strings | select(length > 0)')
+   RUN_ID=$(printf '%s' "$READY_JSON" | jq -er '.task_id | strings | select(length > 0)')
+   export EVAL_URL RUN_ID
+   ```
+
+   `--print_endpoint` returns a JSON object containing both `endpoint` and `task_id`, not a plain URL. If submission fails, times out, or either field is missing, stop before launching the client. A timeout may leave a task queued: recover its ID from available logs/platform state and query `gmp online ready` instead of submitting again. If its ID cannot be determined, report that uncertainty rather than create a duplicate.
+
+2. **Save the assignment.** Record the returned task ID and endpoint in the local run metadata, excluding credentials. Use the returned task ID unchanged as `RUN_ID`; do not substitute a friendly experiment name. Keep any credential-bearing endpoint out of shared reports.
+3. **Start actual model inference against the assigned endpoint.** Use the baseline commands below or the custom adapter. Pass `EVAL_URL` as the evaluation server address and `RUN_ID` as the run ID. Do not run a second `gmp submit` against the online endpoint: the online task already schedules the evaluation. For OpenPI, ensure its separate local model server is ready before launching the eval client.
+4. **Monitor until evaluation completes.** Use the assigned endpoint/task ID for status and preserve the resulting logs and episode artifacts. Queue readiness only means resources are available; it does not mean the model has been evaluated.
+
+An existing ready task starts at step 2; an existing queued task uses `gmp online ready` until ready within the chosen wait budget. Once both fields are valid, continue to evaluation within the user's request without asking them to copy the values back manually.
+
 ## Launch the real policy
 
 `gmp eval` supplies fake actions. Use it only for an explicitly scoped connectivity smoke test, never as evidence of a checkpoint's performance.

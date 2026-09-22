@@ -1,48 +1,60 @@
 # EBench coding agent skills
 
-这套 skills 帮助 coding agent 完成 EBench **机器人策略评测**：准备环境、接入模型、运行实验、定位失败、解释结果。它们不是用于评测 coding agent 自身的 benchmark。
+These skills help coding agents evaluate **robot policies on EBench**: prepare environments, integrate models, run experiments, diagnose failures, and interpret results. They are not a benchmark for evaluating coding agents themselves.
 
-## 从哪里开始
+## Where to start
 
-| Skill | 优先级 | 适用请求 | 交付物 |
+| Skill | Priority | When to use it | Deliverables |
 | --- | --- | --- | --- |
-| [ebench-setup](ebench-setup/SKILL.md) | P0 | 首次使用、检查环境、复现 baseline | 环境检查结果、缺失项、可执行启动命令 |
-| [ebench-evaluate](ebench-evaluate/SKILL.md) | P0 | 本地或在线评测、启动多 worker | 可追溯的 run、日志与完成状态 |
-| [ebench-analyze](ebench-analyze/SKILL.md) | P0 | 生成报告、比较模型、分析能力短板 | HTML 报告、数据覆盖情况、带证据的结论 |
-| [ebench-integrate-policy](ebench-integrate-policy/SKILL.md) | P1 | 把自己的 VLA 接入 EBench | observation/action 适配器及契约验证 |
-| [ebench-debug](ebench-debug/SKILL.md) | P1 | 卡住、报错、动作异常、成功率异常 | 故障定位、最小修复、验证证据 |
+| [ebench-setup](ebench-setup/SKILL.md) | P0 | First-time setup, environment checks, baseline reproduction | Environment findings, missing prerequisites, executable launch commands |
+| [ebench-evaluate](ebench-evaluate/SKILL.md) | P0 | Local or online evaluation, launching multiple workers | Traceable runs, logs, and completion status |
+| [ebench-analyze](ebench-analyze/SKILL.md) | P0 | Report generation, model comparison, capability analysis | HTML reports, data coverage, and evidence-backed conclusions |
+| [ebench-integrate-policy](ebench-integrate-policy/SKILL.md) | P1 | Connecting a custom VLA to EBench | Observation/action adapter and contract validation |
+| [ebench-debug](ebench-debug/SKILL.md) | P1 | Stalled runs, errors, unexpected actions or success rates | Diagnosis, minimal fixes, and verification evidence |
 
-P0 覆盖已有模型从准备到报告的完整路径；自定义模型先使用模型接入 skill，出现故障时再使用排查 skill。暂不单独拆出训练、数据下载、排行榜发布 skill：它们不是每次评测都需要，训练和数据准备可先沿用 baseline 文档。
+P0 skills cover the complete workflow for an existing model, from preparation to reporting. For custom models, start with policy integration; use debugging when failures occur. Training, data downloads, and leaderboard publication do not have separate skills yet because they are not required for every evaluation. Follow the baseline documentation for training and data preparation.
 
-## 使用方法
+## Usage
 
-Skills 放在版本管理下的 `skills/`，每个目录包含标准 `SKILL.md`（含 `name` / `description`）。**此目录本身不保证被所有 agent 自动发现**。最直接的使用方式是在 EBench 仓库中让 agent 读取具体文件：
+Skills are versioned under `skills/`, with a standard `SKILL.md` containing `name` and `description` in each directory. **Not every agent automatically discovers this directory.** The simplest approach is to ask your agent to read a specific file from the EBench repository:
 
 ```text
-请读取 skills/ebench-setup/SKILL.md，检查当前环境是否可以运行 X-VLA 在线评测，列出缺失项。
-请读取 skills/ebench-evaluate/SKILL.md，用已有 endpoint 和 run_id 启动我的模型，只用 worker 0。
-请读取 skills/ebench-integrate-policy/SKILL.md，把我的策略接入 EvalClient，先验证输入输出契约。
-请读取 skills/ebench-debug/SKILL.md，排查这个 run 的 reset timeout，保留现有结果。
-请读取 skills/ebench-analyze/SKILL.md，比较这两个结果目录，输出报告并说明评测覆盖是否一致。
+Read skills/ebench-setup/SKILL.md, check whether this environment can run X-VLA online evaluation, and list any missing prerequisites.
+Read skills/ebench-evaluate/SKILL.md, submit an online evaluation using the configured token, wait for the endpoint and task_id, then launch my model.
+Read skills/ebench-evaluate/SKILL.md and launch my model using the existing endpoint and run_id, with worker 0 only.
+Read skills/ebench-integrate-policy/SKILL.md and connect my policy to EvalClient, validating the input/output contract first.
+Read skills/ebench-debug/SKILL.md and investigate this run's reset timeout while preserving existing results.
+Read skills/ebench-analyze/SKILL.md, compare these two result directories, generate a report, and explain whether their evaluation coverage matches.
 ```
 
-也可以按所用 agent 的技能安装机制导入这些目录。安装后，若 agent 支持 `$skill-name`，可用 `$ebench-evaluate` 等名称调用；不要把复制整套技能到用户全局目录作为评测的前置条件。
+You can also import these directories through your agent's skill installation mechanism. Once installed, agents that support `$skill-name` can invoke them by names such as `$ebench-evaluate`. Copying the entire collection into a global user directory is not a prerequisite for evaluation.
 
-所有 skill 中的仓库路径都相对 **EBench 根目录**，不是相对 skill 所在目录。技能正文使用英文，便于国际用户复用；agent 可以按用户语言回答。首次使用优先提供模型/检查点、在线或本地模式、split/赛道、GPU/worker 预算；已有任务再提供 run_id 和 endpoint。Token 通过本地环境或已有凭据机制提供，不写入仓库或报告。
+Repository paths in all skills are relative to the **EBench root**, not the skill directory. Skill instructions are in English for international reuse; agents can respond in the user's language. For a first run, provide the model/checkpoint, online or local mode, split/track, and GPU/worker budget. For an existing task, also provide its run ID and endpoint. Supply tokens through the local environment or an existing credential mechanism, never through committed files or reports.
 
-## 维护与验收
+## Online evaluation workflow
 
-以当前 checkout 的 baseline 和 `third_party/genmanip-client` 源码为准；升级 submodule 后，复核 CLI 参数、动作转换和结果解析行为。不要把某个 baseline 的归一化或动作布局当成所有模型的协议。
+[ebench-evaluate](ebench-evaluate/SKILL.md#online-evaluation-queue-obtain-endpoint-then-evaluate) includes complete command examples. The agent follows this sequence:
 
-新增或修改 skill 时，除了检查 frontmatter 和文件引用，还应使用以下场景审阅其行为：
+1. Check the local model environment, checkpoint, platform URL, and token.
+2. Run `gmp online submit --print_endpoint` to join the queue and wait for resources.
+3. Parse `endpoint` and `task_id` from the returned JSON, using them as the evaluation URL and `run_id`, respectively.
+4. Launch the baseline or custom policy client for real model evaluation, then monitor progress and save results.
 
-| 场景 | 预期行为 |
+A new task does not require the user to provide an evaluation URL or task ID in advance. After a queue timeout, query the existing task before retrying to avoid duplicate submissions. Receiving a URL does not mean evaluation is complete. The setup and policy integration skills also explain how to connect to this workflow.
+
+## Maintenance and acceptance checks
+
+Treat the baseline code and `third_party/genmanip-client` source in the current checkout as the source of truth. After updating submodules, review CLI arguments, action conversions, and result parsing. Do not assume one baseline's normalization or action layout applies to every model.
+
+When adding or changing a skill, check its frontmatter and file references, then review its behavior against these scenarios:
+
+| Scenario | Expected behavior |
 | --- | --- |
-| 新 clone 缺少 submodule | 明确缺失依赖，不把 import 失败当作模型故障 |
-| 用户要求真实模型评测 | 使用 baseline/自定义策略入口，不把 `gmp eval` 假动作算作模型成绩 |
-| 已有在线 task 等待资源 | 查询已有 task，不重复创建任务 |
-| step 超时，执行状态未知 | 丢弃旧 chunk，有限恢复并记录中断，不盲目重发动作 |
-| analyse 输入为空 | 指出无本地结果，不把内置参考报告说成用户成绩 |
-| 两个 run 的 split 或任务覆盖不同 | 标记不可直接比较，说明分母与缺失数据 |
+| A fresh clone is missing submodules | Identify missing dependencies rather than treating import errors as model failures |
+| The user requests real model evaluation | Use a baseline/custom policy entry point; do not report `gmp eval` fake actions as model performance |
+| An existing online task is waiting for resources | Query the existing task instead of creating another one |
+| A step times out with unknown execution state | Discard the old chunk, use bounded recovery, and record the interruption rather than blindly resending actions |
+| Analysis inputs are empty | Report missing local results rather than presenting bundled reference data as the user's results |
+| Two runs have different splits or task coverage | Flag them as not directly comparable and explain denominators and missing data |
 
-这些场景是维护验收标准，不表示已执行 GPU 或在线平台端到端验证。
+These scenarios are maintenance acceptance criteria, not evidence that GPU or online platform end-to-end validation has been performed.
