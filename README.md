@@ -43,6 +43,7 @@ A new systematic diagnostic tool, **gmp analyse**, automatically produces a **fi
 
 | Date | Highlight |
 | :--- | :--- |
+| **2026-09** | 🔧 **Minor EBench fixes and improvements** — Adjusted the step limits for `bottle` and `shop` from 3,000 to 5,000, and refined the web interface of the online evaluation platform. |
 | **2026-09** | 🛠️ **OpenPI baseline update** — Updated π0 / π0.5 configs. Please use the updated baseline code for evaluation and reproducing results. See the [update notes](baselines/openpi/README.md#update-notes). |
 | **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
 | **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
@@ -114,6 +115,12 @@ gmp status
 ```
 
 A full validation pass takes roughly **30 minutes on 8× RTX 4090**. Detailed setup, asset download, and the complete `gmp` reference are in the [docs site](https://internrobotics.github.io/EBench-doc/).
+
+## Evaluate with a coding agent
+
+The repository includes five reusable [agent skills](skills/README.md) for environment setup, policy integration, evaluation runs, debugging, and result analysis. They guide agents through the checked-out baseline and client implementations, including real-policy launch commands and result coverage checks.
+
+To start, ask your agent: **“Read `skills/ebench-setup/SKILL.md` and check whether this environment is ready to evaluate my model.”** Then use [ebench-evaluate](skills/ebench-evaluate/SKILL.md) to run it and [ebench-analyze](skills/ebench-analyze/SKILL.md) to interpret the results. See the [skill catalog and usage guide](skills/README.md) for all workflows; automatic discovery depends on your agent's skill installation mechanism.
 
 ## Tasks
 

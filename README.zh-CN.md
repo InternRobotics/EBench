@@ -45,6 +45,7 @@
 
 | 日期 | 重要更新 |
 | :--- | :--- |
+| **2026-09** | 🔧 **小修复与优化** — 将 `bottle` 和 `shop` 的步数上限从 3,000 调整为 5000，并优化了在线评测平台的网页界面。 |
 | **2026-09** | 🛠️ **OpenPI Baseline 更新** — 更新 π0 / π0.5 配置。评测与复现结果时，请使用更新后的 Baseline 代码。详见[更新说明](baselines/openpi/README.md#update-notes)。 |
 | **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |
 | **2026-06** | 🚀 **正式发布** — EBench、参考 Baseline、训练数据及训测隔离的在线评测现已公开。 |
@@ -116,6 +117,12 @@ gmp status
 ```
 
 8 卡 RTX 4090 上跑完整套验证集大约需要 **30 分钟**。完整的环境配置、资产下载与 `gmp` 命令参考请见[文档站点](https://internrobotics.github.io/EBench-doc/zh-cn/)。
+
+## 使用 coding agent 评测
+
+仓库提供五个可复用的 [agent skills](skills/README.md)，覆盖环境准备、模型接入、评测运行、故障排查和结果分析。它们引导 agent 按当前仓库的 baseline 与客户端实现完成操作，并核对真实模型入口及结果覆盖情况。
+
+可以先告诉 agent：**“请读取 `skills/ebench-setup/SKILL.md`，检查当前环境是否能评测我的模型。”** 随后使用 [ebench-evaluate](skills/ebench-evaluate/SKILL.md) 运行评测、[ebench-analyze](skills/ebench-analyze/SKILL.md) 解读结果。完整流程和调用示例见 [skill 目录与使用说明](skills/README.md)；是否自动发现取决于所用 agent 的技能安装机制。
 
 ## 任务总览
 
