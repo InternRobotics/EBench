@@ -39,12 +39,11 @@
 
 #### 💡 交互式分析工具
 
-新增体系化诊断工具 **`gmp analyse`**，可在评测完成后自动生成包含原子技能、操作精度等维度的**五轴能力画像**，以及**四维泛化分析**。用户可以交互式选择评测结果，并从多个能力与泛化维度与 **π0、π0.5、X-VLA 和 InternVLA-A1** 四个参考 Baseline 进行对比。
-
-**[示例 →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)**
+使用 **`gmp analyse`** 探索最新榜单模型的能力画像与泛化分析。**[交互式示例 →](https://raw.githack.com/InternRobotics/EBench/main/assets/analyse_report.html)**
 
 | 日期 | 重要更新 |
 | :--- | :--- |
+| **2026-09** | 📄 **[GPT-6-Astra 评测报告](https://internrobotics.github.io/EBench-Astra-Tech-Report)** — 深入了解其在 EBench 上的表现，以及操作能力与泛化能力的详细分析。 |
 | **2026-09** | 🔧 **小修复与优化** — 将 `bottle` 和 `shop` 的步数上限从 3,000 调整为 5000，并优化了在线评测平台的网页界面。 |
 | **2026-09** | 🛠️ **OpenPI Baseline 更新** — 更新 π0 / π0.5 配置。评测与复现结果时，请使用更新后的 Baseline 代码。详见[更新说明](baselines/openpi/README.md#update-notes)。 |
 | **2026-07** | 🛠️ **评测工具链** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) 通过 `gmp` CLI 统一提供评测提交与监控、动作/状态曲线绘制以及 episode 交互式查看。 |

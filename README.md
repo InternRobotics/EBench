@@ -43,7 +43,8 @@ A new systematic diagnostic tool, **gmp analyse**, automatically produces a **fi
 
 | Date | Highlight |
 | :--- | :--- |
-| **2026-09** | 🔧 **Minor EBench fixes and improvements** — Adjusted the step limits for `bottle` and `shop` from 3,000 to 5,000, and refined the web interface of the online evaluation platform. |
+| **2026-09** | 📄 **[GPT-6-Astra evaluation report](https://internrobotics.github.io/EBench-Astra-Tech-Report)** — Explore its performance on EBench through a detailed breakdown of manipulation capabilities and generalization. |
+| **2026-09** | 🔧 **Minor EBench fixes and improvements** — Refined the web interface of the online evaluation platform, and adjusted the step limits for `bottle` and `shop` from 3,000 to 5,000. Explore the latest leaderboard models’ capability profiles and generalization analysis. **[Leaderboard analysis →](https://internrobotics.shlab.org.cn/eval/model-analysis?model=OpenWAM-Alpha)**|
 | **2026-09** | 🛠️ **OpenPI baseline update** — Updated π0 / π0.5 configs. Please use the updated baseline code for evaluation and reproducing results. See the [update notes](baselines/openpi/README.md#update-notes). |
 | **2026-07** | 🛠️ **Evaluation toolkit** — [`genmanip-client`](https://github.com/InternRobotics/genmanip-client) brings submission, monitoring, action/state plots, and interactive episode visualization together in the `gmp` CLI. |
 | **2026-06** | 🚀 **Public release** — EBench, reference baselines, training data, and held-out online evaluation are now available. |
